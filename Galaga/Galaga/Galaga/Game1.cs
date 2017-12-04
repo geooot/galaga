@@ -19,13 +19,16 @@ namespace Galaga
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D projectileTexture;
-
+        List<Sprite> sprites;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 600;
+            graphics.PreferredBackBufferHeight = 600;
         }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -36,8 +39,9 @@ namespace Galaga
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            IsMouseVisible = true;
             base.Initialize();
+            
         }
 
         /// <summary>
@@ -47,11 +51,20 @@ namespace Galaga
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+            reset();
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            this.Content.Load<Texture2D>("scrolling_space");
+            Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            sprites.Add(back);
             // TODO: use this.Content to load your game content here
             projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             projectileTexture.SetData(new Color[] { Color.White });
+        }
+
+
+        public void reset()
+        {
+            sprites = new List<Sprite>();
         }
 
         /// <summary>
@@ -63,6 +76,7 @@ namespace Galaga
             // TODO: Unload any non ContentManager content here
         }
 
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -73,8 +87,12 @@ namespace Galaga
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+            KeyboardState curr = Keyboard.GetState();
 
             // TODO: Add your update logic here
+            foreach (Sprite spr in sprites) {
+                spr.update(curr);
+            }
 
             base.Update(gameTime);
         }
@@ -88,6 +106,14 @@ namespace Galaga
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            foreach (Sprite spr in sprites)
+            {
+                spr.draw(spriteBatch);
+            }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
