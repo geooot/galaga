@@ -18,6 +18,8 @@ namespace Galaga
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D projectileTexture;
+
 
         public Game1()
         {
@@ -48,6 +50,8 @@ namespace Galaga
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            projectileTexture.SetData(new Color[] { Color.White });
         }
 
         /// <summary>
