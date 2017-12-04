@@ -16,10 +16,16 @@ namespace Galaga
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        const int CHARACTER_SPEED = 5;
+
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D projectileTexture;
+        Texture2D tempTexture;
         List<Sprite> sprites;
+        List<Projectile> projectiles;
+
+        Character mainCharacter;
 
         public Game1()
         {
@@ -51,20 +57,22 @@ namespace Galaga
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
+            tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            tempTexture.SetData(new Color[] { Color.White });
+
             reset();
             spriteBatch = new SpriteBatch(GraphicsDevice);
             this.Content.Load<Texture2D>("scrolling_space");
             Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             sprites.Add(back);
-            // TODO: use this.Content to load your game content here
-            projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
-            projectileTexture.SetData(new Color[] { Color.White });
+            
         }
 
 
         public void reset()
         {
             sprites = new List<Sprite>();
+            mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
         }
 
         /// <summary>
@@ -94,6 +102,8 @@ namespace Galaga
                 spr.update(curr);
             }
 
+            mainCharacter.update(curr);
+
             base.Update(gameTime);
         }
 
@@ -112,6 +122,8 @@ namespace Galaga
             {
                 spr.draw(spriteBatch);
             }
+
+            mainCharacter.draw(spriteBatch);
 
             spriteBatch.End();
 

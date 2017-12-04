@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Galaga
 {
-    class Projectile
+    class Projectile: Sprite
     {
         int xVel, yVel;
         Texture2D texture;
