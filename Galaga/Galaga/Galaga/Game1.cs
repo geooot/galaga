@@ -20,13 +20,18 @@ namespace Galaga
         SpriteBatch spriteBatch;
         Texture2D projectileTexture;
         List<Sprite> sprites;
+        public const int WIDTH = 600;
+        public const int HEIGHT = 600;
+        int gameTimer = 0;
+
+        Enemy tester;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 600;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = WIDTH;
+            graphics.PreferredBackBufferHeight = HEIGHT;
         }
 
 
@@ -59,12 +64,15 @@ namespace Galaga
             // TODO: use this.Content to load your game content here
             projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             projectileTexture.SetData(new Color[] { Color.White });
+            Enemy.load(this, WIDTH, HEIGHT);
+            tester = new Enemy(150, 150);
         }
 
 
         public void reset()
         {
             sprites = new List<Sprite>();
+            gameTimer = 0;
         }
 
         /// <summary>
@@ -93,6 +101,15 @@ namespace Galaga
             foreach (Sprite spr in sprites) {
                 spr.update(curr);
             }
+            Enemy.deviation();
+            gameTimer++;
+            tester.update(curr);
+
+            if (gameTimer%(60*4)==0)
+            {
+                Console.WriteLine("---ACTIVATE---");
+                tester.dive();
+            }
 
             base.Update(gameTime);
         }
@@ -112,6 +129,8 @@ namespace Galaga
             {
                 spr.draw(spriteBatch);
             }
+
+            tester.draw(spriteBatch);
 
             spriteBatch.End();
 
