@@ -17,7 +17,9 @@ namespace Galaga
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         const int CHARACTER_SPEED = 5;
-
+        const int FIRE_TIMEOUT = 10;
+        public const int GAME_WIDTH = 600;
+        public const int GAME_HEIGHT = 600;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -25,14 +27,20 @@ namespace Galaga
         List<Sprite> sprites;
         List<Projectile> projectiles;
 
+
+        KeyboardState oldKb = Keyboard.GetState();
+
         Character mainCharacter;
+
+        int fireTimeOut = FIRE_TIMEOUT;
+        int fireTimer = 0;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 600;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = GAME_WIDTH;
+            graphics.PreferredBackBufferHeight = GAME_HEIGHT;
         }
 
 
@@ -73,6 +81,7 @@ namespace Galaga
         {
             sprites = new List<Sprite>();
             mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
+            projectiles = new List<Projectile>();
         }
 
         /// <summary>
@@ -96,13 +105,57 @@ namespace Galaga
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             KeyboardState curr = Keyboard.GetState();
-
-            // TODO: Add your update logic here
+            
+            //update all other sprites
             foreach (Sprite spr in sprites) {
                 spr.update(curr);
             }
 
+            //update main character
             mainCharacter.update(curr);
+
+            // if shooting
+
+            if(curr.IsKeyDown(Keys.Space) && !oldKb.IsKeyDown(Keys.Space))
+            {
+                fireTimer = FIRE_TIMEOUT;
+                fireTimeOut = FIRE_TIMEOUT;
+            }
+
+            if (curr.IsKeyDown(Keys.Space))
+            {
+                if (fireTimer >= fireTimeOut)
+                {
+                    Rectangle pPos = mainCharacter.pos;
+                    pPos.Width = 6;
+                    pPos.Height = 20;
+                    pPos.X += 29;
+                    pPos.Y -= pPos.Width;
+
+                    projectiles.Add(new Projectile(tempTexture, pPos, 0, -5));
+                    fireTimeOut += 5;
+                    fireTimer = 0;
+                }
+
+                fireTimer++;
+            }
+
+            //update all projectiles
+            List<Projectile> toBeDeleted = new List<Projectile>();
+            foreach(Projectile p in projectiles)
+            {
+                if (p.isOutOfBounds())
+                    toBeDeleted.Add(p);
+                p.update(curr);
+            }
+
+            foreach(Projectile p in toBeDeleted)
+            {
+                projectiles.Remove(p);
+            }
+
+
+            oldKb = curr;
 
             base.Update(gameTime);
         }
@@ -118,12 +171,20 @@ namespace Galaga
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
+            // draw other sprites
             foreach (Sprite spr in sprites)
             {
                 spr.draw(spriteBatch);
             }
 
+            //draw main character
             mainCharacter.draw(spriteBatch);
+
+            //draw projectiles
+            foreach (Projectile p in projectiles)
+            {
+                p.draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
