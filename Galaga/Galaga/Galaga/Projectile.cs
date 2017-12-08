@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Galaga
 {
-    class Projectile
+    class Projectile: Sprite
     {
         int xVel, yVel;
         Texture2D texture;
@@ -32,13 +32,18 @@ namespace Galaga
 
         public void draw(SpriteBatch sp)
         {
-            sp.Draw(texture, pos, Color.White);
+            sp.Draw(texture, pos, Color.Red);
         }
 
         public void update(KeyboardState kb)
         {
             pos.X += xVel;
             pos.Y += yVel;
+        }
+
+        public bool isOutOfBounds()
+        {
+            return (pos.Bottom < 0 || pos.Top > Game1.GAME_HEIGHT);
         }
 
     }
