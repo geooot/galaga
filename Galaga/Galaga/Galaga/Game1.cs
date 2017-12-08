@@ -80,8 +80,8 @@ namespace Galaga
             sprites.Add(back);
 
             // TODO: use this.Content to load your game content here
-            projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
-            projectileTexture.SetData(new Color[] { Color.White });
+            tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            tempTexture.SetData(new Color[] { Color.White });
             Enemy.load(this, GAME_WIDTH, GAME_HEIGHT);
             tester = new Enemy(150, 150);
 
