@@ -32,6 +32,7 @@ namespace Galaga
         double xPos = -100;
         double yPos = -100;
 
+
         public Enemy(int x, int y)
         {
             state = 0;
@@ -68,10 +69,23 @@ namespace Galaga
                 diving = true;
                 ySpeed = speed;
                 xSpeed = 0;
-                acceleration = rand.NextDouble()*.3-.15;
+                //acceleration = rand.NextDouble()*.3-.15;
+                acceleration = 2.0 * (rand.Next(screenDimensions[0]) - (spotX+rect.Width/2.0)) * ySpeed * ySpeed / ((screenDimensions[1]-rect.Y)* 1.0*(screenDimensions[1] - rect.Y));
+                Console.WriteLine(acceleration);
                 state = 2;
             }
             
+        }
+
+        public void kill()
+        {
+            state = 3;
+        }
+
+        public void revive()
+        {
+            state = 0;
+            rect.X = rand.Next(0, screenDimensions[0] - rect.Width);
         }
 
 
@@ -103,7 +117,7 @@ namespace Galaga
         public void update(KeyboardState kbs)
         {
 
-            Console.WriteLine(state);
+           // Console.WriteLine(state);
             switch(state)
             {
                 case 0:
