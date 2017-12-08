@@ -25,6 +25,7 @@ namespace Galaga
         SpriteBatch spriteBatch;
         Texture2D tempTexture;
         List<Sprite> sprites;
+
         List<Projectile> projectiles;
 
 
@@ -34,6 +35,9 @@ namespace Galaga
 
         int fireTimeOut = FIRE_TIMEOUT;
         int fireTimer = 0;
+        int gameTimer = 0;
+
+        Enemy tester;
 
         public Game1()
         {
@@ -41,6 +45,7 @@ namespace Galaga
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = GAME_WIDTH;
             graphics.PreferredBackBufferHeight = GAME_HEIGHT;
+
         }
 
 
@@ -73,7 +78,13 @@ namespace Galaga
             this.Content.Load<Texture2D>("scrolling_space");
             Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             sprites.Add(back);
-            
+
+            // TODO: use this.Content to load your game content here
+            projectileTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
+            projectileTexture.SetData(new Color[] { Color.White });
+            Enemy.load(this, GAME_WIDTH, GAME_HEIGHT);
+            tester = new Enemy(150, 150);
+
         }
 
 
@@ -82,6 +93,7 @@ namespace Galaga
             sprites = new List<Sprite>();
             mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
             projectiles = new List<Projectile>();
+            gameTimer = 0;
         }
 
         /// <summary>
@@ -109,6 +121,15 @@ namespace Galaga
             //update all other sprites
             foreach (Sprite spr in sprites) {
                 spr.update(curr);
+            }
+            Enemy.deviation();
+            gameTimer++;
+            tester.update(curr);
+
+            if (gameTimer%(60*4)==0)
+            {
+                Console.WriteLine("---ACTIVATE---");
+                tester.dive();
             }
 
             //update main character
@@ -185,6 +206,9 @@ namespace Galaga
             {
                 p.draw(spriteBatch);
             }
+
+            tester.draw(spriteBatch);
+
 
             spriteBatch.End();
 
