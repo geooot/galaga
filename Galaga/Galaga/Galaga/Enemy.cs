@@ -92,6 +92,10 @@ namespace Galaga
 
         public void draw(SpriteBatch sb)
         {
+            if (!Game1.gameStarted)
+            {
+                return;
+            }
             if (state !=3 )
             {
                 sb.Draw(text, rect, Color.White);
@@ -116,7 +120,10 @@ namespace Galaga
 
         public void update(KeyboardState kbs)
         {
-
+            if (!Game1.gameStarted)
+            {
+                return;
+            }
            // Console.WriteLine(state);
             switch(state)
             {

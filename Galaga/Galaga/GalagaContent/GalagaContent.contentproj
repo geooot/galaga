@@ -37,8 +37,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameFont1.spritefont">
+      <Name>GameFont1</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
+    </Compile>
     <Compile Include="AjitEnemy.png">
       <Name>AjitEnemy</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="usa.png">
+      <Name>usa</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
