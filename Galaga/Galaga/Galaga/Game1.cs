@@ -17,24 +17,29 @@ namespace Galaga
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         const int CHARACTER_SPEED = 5;
+
+        public static bool gameStarted;
+       
+        public static GraphicsDeviceManager graphics;
+
         const int FIRE_TIMEOUT = 10;
         const int MIN_DIVE_TIME = 120;
         const int MAX_DIVE_TIME = 240;
         public const int GAME_WIDTH = 600;
         public const int GAME_HEIGHT = 600;
 
-        GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D tempTexture;
+        public static SpriteFont gameFont1;
         List<Sprite> sprites;
 
         List<Projectile> projectiles;
 
         Random r = new Random();
-
         KeyboardState oldKb = Keyboard.GetState();
 
         Character mainCharacter;
+        Menu menu;
 
         int fireTimeOut = FIRE_TIMEOUT;
         int fireTimer = 0;
@@ -82,6 +87,10 @@ namespace Galaga
             this.Content.Load<Texture2D>("scrolling_space");
             Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             sprites.Add(back);
+            
+            gameFont1 = Content.Load<SpriteFont>("GameFont1");
+            menu = new Menu();
+
 
             // TODO: use this.Content to load your game content here
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
@@ -102,7 +111,6 @@ namespace Galaga
 
             }
 
-
         }
 
 
@@ -110,6 +118,9 @@ namespace Galaga
         {
             sprites = new List<Sprite>();
             mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
+
+            gameStarted = false;
+
             projectiles = new List<Projectile>();
             gameTimer = 0;
         }
@@ -162,6 +173,7 @@ namespace Galaga
 
             //update main character
             mainCharacter.update(curr);
+            menu.update(curr);
 
             // if shooting
 
@@ -228,6 +240,7 @@ namespace Galaga
 
             //draw main character
             mainCharacter.draw(spriteBatch);
+            menu.draw(spriteBatch);
 
             //draw projectiles
             foreach (Projectile p in projectiles)
