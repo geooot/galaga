@@ -12,7 +12,7 @@ namespace Galaga
     {
         int xVel, yVel;
         Texture2D texture;
-        Rectangle pos;
+        public Rectangle pos;
 
         public Projectile(Texture2D t, Rectangle pos, int xVel, int yVel)
         {
