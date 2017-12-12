@@ -42,6 +42,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
+    </Compile>
     <Compile Include="AjitEnemy.png">
       <Name>AjitEnemy</Name>
       <Importer>TextureImporter</Importer>
