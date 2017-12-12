@@ -23,6 +23,8 @@ namespace Galaga
         public static GraphicsDeviceManager graphics;
 
         const int FIRE_TIMEOUT = 10;
+        const int MIN_DIVE_TIME = 120;
+        const int MAX_DIVE_TIME = 240;
         public const int GAME_WIDTH = 600;
         public const int GAME_HEIGHT = 600;
 
@@ -33,6 +35,7 @@ namespace Galaga
 
         List<Projectile> projectiles;
 
+        Random r = new Random();
         KeyboardState oldKb = Keyboard.GetState();
 
         Character mainCharacter;
@@ -41,8 +44,9 @@ namespace Galaga
         int fireTimeOut = FIRE_TIMEOUT;
         int fireTimer = 0;
         int gameTimer = 0;
+        int nextDiveTime = 0;
 
-        Enemy tester;
+        List<Enemy> enemies = new List<Enemy>();
 
         public Game1()
         {
@@ -50,7 +54,7 @@ namespace Galaga
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = GAME_WIDTH;
             graphics.PreferredBackBufferHeight = GAME_HEIGHT;
-
+            nextDiveTime = r.Next(MIN_DIVE_TIME, MAX_DIVE_TIME);
         }
 
 
@@ -92,7 +96,21 @@ namespace Galaga
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             tempTexture.SetData(new Color[] { Color.White });
             Enemy.load(this, GAME_WIDTH, GAME_HEIGHT);
-            tester = new Enemy(150, 150);
+
+            int xPos = 0;
+            int yPos = 10;
+            for(int x = 0; x < 18; x++)
+            {
+                enemies.Add(new Enemy(xPos, yPos));
+                xPos += 100;
+                if (xPos == 600)
+                {
+                    yPos += 100;
+                    xPos = 0;
+                }
+
+            }
+
         }
 
 
@@ -133,15 +151,25 @@ namespace Galaga
             foreach (Sprite spr in sprites) {
                 spr.update(curr);
             }
+
             Enemy.deviation();
             gameTimer++;
-            tester.update(curr);
 
-            if (gameTimer%(60*4)==0)
+            // update enemy
+            List<Enemy> stateZeroes = new List<Enemy>();
+            foreach(Enemy e in enemies)
             {
-                Console.WriteLine("---ACTIVATE---");
-                tester.dive();
+                e.update(curr);
+                if (e.state == 1)
+                    stateZeroes.Add(e);
             }
+
+            if (gameTimer % nextDiveTime == 0)
+            {
+                stateZeroes[r.Next(0, stateZeroes.Count - 1)].dive();
+                nextDiveTime = r.Next(MIN_DIVE_TIME, MAX_DIVE_TIME);
+            }
+
 
             //update main character
             mainCharacter.update(curr);
@@ -220,7 +248,11 @@ namespace Galaga
                 p.draw(spriteBatch);
             }
 
-            tester.draw(spriteBatch);
+
+            foreach (Enemy e in enemies)
+            {
+                e.draw(spriteBatch);
+            }
 
 
             spriteBatch.End();
