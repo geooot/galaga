@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Background.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
