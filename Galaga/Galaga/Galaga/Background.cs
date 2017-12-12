@@ -25,6 +25,14 @@ namespace Galaga
             rect = new Rectangle(0, 0, width, height);
         }
 
+        public Background(Texture2D bg, int w, int h)
+        {
+            width = w;
+            height = h;
+            text = bg;
+            rect = new Rectangle(0, 0, width, height);
+        }
+
         public void draw(SpriteBatch sb)
         {
             sb.Draw(text, rect, Color.White);

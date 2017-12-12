@@ -31,8 +31,7 @@ namespace Galaga
         SpriteBatch spriteBatch;
         Texture2D tempTexture;
         public static SpriteFont gameFont1;
-        List<Sprite> sprites;
-        List<Enemy> enemies;
+        List<Sprite> sprites = new List<Sprite>();
         Texture2D playerText;
 
         List<Projectile> projectiles;
@@ -87,10 +86,10 @@ namespace Galaga
             playerText = this.Content.Load<Texture2D>("usa");
             score = new Score();
 
-            reset();
+            
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.Content.Load<Texture2D>("scrolling_space");
-            Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            Texture2D bg = this.Content.Load<Texture2D>("scrolling_space");
+            Sprite back = new Background(bg, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             sprites.Add(back);
             
             gameFont1 = Content.Load<SpriteFont>("GameFont1");
@@ -101,10 +100,27 @@ namespace Galaga
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             tempTexture.SetData(new Color[] { Color.White });
             Enemy.load(this, GAME_WIDTH, GAME_HEIGHT);
+            reset();
+
+
+        }
+
+
+        public void reset()
+        {
+            
+            mainCharacter = new Character(playerText, new Rectangle(275, 468, 100 , 70), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
+
+            gameStarted = false;
+           // score.incrementScore(score.getScore() * -1);
+            projectiles = new List<Projectile>();
+            gameTimer = 0;
+            enemies = new List<Enemy>();
+            lives = 3;
 
             int xPos = 0;
             int yPos = 10;
-            for(int x = 0; x < 18; x++)
+            for (int x = 0; x < 18; x++)
             {
                 enemies.Add(new Enemy(xPos, yPos));
                 xPos += 100;
@@ -115,21 +131,6 @@ namespace Galaga
                 }
 
             }
-
-        }
-
-
-        public void reset()
-        {
-            sprites = new List<Sprite>();
-            mainCharacter = new Character(playerText, new Rectangle(275, 468, 100 , 70), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
-
-            gameStarted = false;
-            score.incrementScore(score.getScore() * -1);
-            projectiles = new List<Projectile>();
-            gameTimer = 0;
-            enemies = new List<Enemy>();
-            lives = 3;
         }
 
         /// <summary>
@@ -171,7 +172,7 @@ namespace Galaga
                     stateZeroes.Add(e);
             }
 
-            if (gameTimer % nextDiveTime == 0)
+            if (gameTimer % nextDiveTime == 0 && gameStarted)
             {
                 stateZeroes[r.Next(0, stateZeroes.Count - 1)].dive();
                 nextDiveTime = r.Next(MIN_DIVE_TIME, MAX_DIVE_TIME);
@@ -180,7 +181,12 @@ namespace Galaga
 
             //update main character
             mainCharacter.update(curr);
+            if (curr.IsKeyDown(Keys.Space) && !oldKb.IsKeyDown(Keys.Space) && gameStarted == false)
+            {
+                score.incrementScore(score.getScore() * -1);
+            }
             menu.update(curr);
+
             score.update(curr);
             // if shooting
 
@@ -222,29 +228,17 @@ namespace Galaga
                 projectiles.Remove(p);
             }
 
-            //collisions
-            //projectiles and enemies
-            for (int i=0; i<projectiles.Count; i++)
-            {
-                for (int e = 0; e < enemies.Count; e++)
-                {
-                    if (projectiles[i].pos.Intersects(enemies[e].rect))
-                    {
-                        enemies[e].kill();
-                        projectiles.Remove(projectiles[i]);
-                        i--;
-                    }
-                }
-            }
+
             //enemies and player
             for (int e = 0; e < enemies.Count; e++)
             {
-                if (mainCharacter.pos.Intersects(enemies[e].rect))
+                if (mainCharacter.pos.Intersects(enemies[e].rect) && enemies[e].state != 3)
                 {
                     lives--;
                     enemies[e].kill();
                 }
             }
+
             //enemy revival
             bool allDead = true;
             for (int e = 0; e < enemies.Count; e++)
@@ -271,6 +265,22 @@ namespace Galaga
             
             oldKb = curr;
 
+            //collisions
+            //projectiles and enemies
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                for (int e = 0; e < enemies.Count; e++)
+                {
+                    if (projectiles[i].pos.Intersects(enemies[e].rect) && enemies[e].state != 3)
+                    {
+                        enemies[e].kill();
+                        projectiles.Remove(projectiles[i]);
+                        score.incrementScore(10);
+                        i--;
+                        break;
+                    }
+                }
+            }
             base.Update(gameTime);
         }
 
@@ -301,12 +311,12 @@ namespace Galaga
                 p.draw(spriteBatch);
             }
 
-            score.draw(spriteBatch);
-
             foreach (Enemy e in enemies)
             {
                 e.draw(spriteBatch);
             }
+
+            score.draw(spriteBatch);
 
             spriteBatch.End();
             
