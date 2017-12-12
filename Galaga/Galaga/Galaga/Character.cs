@@ -11,7 +11,7 @@ namespace Galaga
     class Character: Sprite
     {
         Texture2D texture;
-        Rectangle pos;
+        public Rectangle pos;
         int minX, maxX, speed;
 
         public Character(Texture2D t, Rectangle pos, int minX, int maxX, int speed)
