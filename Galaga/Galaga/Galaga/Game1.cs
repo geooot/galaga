@@ -17,15 +17,19 @@ namespace Galaga
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         const int CHARACTER_SPEED = 5;
+        public static bool gameStarted;
+        
 
-
-        GraphicsDeviceManager graphics;
+        public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D tempTexture;
+        public static SpriteFont gameFont1;
         List<Sprite> sprites;
         List<Projectile> projectiles;
 
+
         Character mainCharacter;
+        Menu menu;
 
         public Game1()
         {
@@ -65,7 +69,8 @@ namespace Galaga
             this.Content.Load<Texture2D>("scrolling_space");
             Sprite back = new Background(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             sprites.Add(back);
-            
+            gameFont1 = Content.Load<SpriteFont>("GameFont1");
+            menu = new Menu();
         }
 
 
@@ -73,6 +78,7 @@ namespace Galaga
         {
             sprites = new List<Sprite>();
             mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
+            gameStarted = false;
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace Galaga
             }
 
             mainCharacter.update(curr);
-
+            menu.update(curr);
             base.Update(gameTime);
         }
 
@@ -124,6 +130,7 @@ namespace Galaga
             }
 
             mainCharacter.draw(spriteBatch);
+            menu.draw(spriteBatch);
 
             spriteBatch.End();
 
