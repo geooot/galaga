@@ -32,7 +32,7 @@ namespace Galaga
         Texture2D tempTexture;
         public static SpriteFont gameFont1;
         List<Sprite> sprites;
-
+        Texture2D playerText;
         List<Projectile> projectiles;
 
         Random r = new Random();
@@ -82,8 +82,9 @@ namespace Galaga
             // Create a new SpriteBatch, which can be used to draw textures.
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             tempTexture.SetData(new Color[] { Color.White });
-
+            playerText = this.Content.Load<Texture2D>("usa");
             score = new Score();
+
             reset();
             spriteBatch = new SpriteBatch(GraphicsDevice);
             this.Content.Load<Texture2D>("scrolling_space");
@@ -119,7 +120,7 @@ namespace Galaga
         public void reset()
         {
             sprites = new List<Sprite>();
-            mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
+            mainCharacter = new Character(playerText, new Rectangle(275, 468, 100 , 70), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
 
             gameStarted = false;
             score.incrementScore(score.getScore() * -1);
