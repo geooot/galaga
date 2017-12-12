@@ -32,7 +32,9 @@ namespace Galaga
         Texture2D tempTexture;
         public static SpriteFont gameFont1;
         List<Sprite> sprites;
+        List<Enemy> enemies;
         Texture2D playerText;
+
         List<Projectile> projectiles;
 
         Random r = new Random();
@@ -45,8 +47,8 @@ namespace Galaga
         int fireTimeOut = FIRE_TIMEOUT;
         int fireTimer = 0;
         int gameTimer = 0;
+        int lives = 3;
         int nextDiveTime = 0;
-
         List<Enemy> enemies = new List<Enemy>();
 
         public Game1()
@@ -126,6 +128,8 @@ namespace Galaga
             score.incrementScore(score.getScore() * -1);
             projectiles = new List<Projectile>();
             gameTimer = 0;
+            enemies = new List<Enemy>();
+            lives = 3;
         }
 
         /// <summary>
@@ -218,7 +222,53 @@ namespace Galaga
                 projectiles.Remove(p);
             }
 
-
+            //collisions
+            //projectiles and enemies
+            for (int i=0; i<projectiles.Count; i++)
+            {
+                for (int e = 0; e < enemies.Count; e++)
+                {
+                    if (projectiles[i].pos.Intersects(enemies[e].rect))
+                    {
+                        enemies[e].kill();
+                        projectiles.Remove(projectiles[i]);
+                        i--;
+                    }
+                }
+            }
+            //enemies and player
+            for (int e = 0; e < enemies.Count; e++)
+            {
+                if (mainCharacter.pos.Intersects(enemies[e].rect))
+                {
+                    lives--;
+                    enemies[e].kill();
+                }
+            }
+            //enemy revival
+            bool allDead = true;
+            for (int e = 0; e < enemies.Count; e++)
+            {
+                if (enemies[e].state != 3)
+                {
+                    allDead = false;
+                    break;
+                }
+            }
+            if (allDead)
+            {
+                Enemy.speed++;
+                for (int e = 0; e < enemies.Count; e++)
+                {
+                    enemies[e].revive();
+                }
+            }
+            //player lives
+            if (lives<=0)
+            {
+                reset();//game restarts
+            }
+            
             oldKb = curr;
 
             base.Update(gameTime);
