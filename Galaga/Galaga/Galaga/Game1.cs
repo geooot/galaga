@@ -40,6 +40,7 @@ namespace Galaga
 
         Character mainCharacter;
         Menu menu;
+        Score score;
 
         int fireTimeOut = FIRE_TIMEOUT;
         int fireTimer = 0;
@@ -82,6 +83,7 @@ namespace Galaga
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
             tempTexture.SetData(new Color[] { Color.White });
 
+            score = new Score();
             reset();
             spriteBatch = new SpriteBatch(GraphicsDevice);
             this.Content.Load<Texture2D>("scrolling_space");
@@ -90,7 +92,7 @@ namespace Galaga
             
             gameFont1 = Content.Load<SpriteFont>("GameFont1");
             menu = new Menu();
-
+            
 
             // TODO: use this.Content to load your game content here
             tempTexture = new Texture2D(graphics.GraphicsDevice, 1, 1);
@@ -120,7 +122,7 @@ namespace Galaga
             mainCharacter = new Character(tempTexture, new Rectangle(268, 468, 64, 64), 0, graphics.PreferredBackBufferWidth - 64, CHARACTER_SPEED);
 
             gameStarted = false;
-
+            score.incrementScore(score.getScore() * -1);
             projectiles = new List<Projectile>();
             gameTimer = 0;
         }
@@ -174,7 +176,7 @@ namespace Galaga
             //update main character
             mainCharacter.update(curr);
             menu.update(curr);
-
+            score.update(curr);
             // if shooting
 
             if(curr.IsKeyDown(Keys.Space) && !oldKb.IsKeyDown(Keys.Space))
@@ -241,22 +243,22 @@ namespace Galaga
             //draw main character
             mainCharacter.draw(spriteBatch);
             menu.draw(spriteBatch);
-
+            
             //draw projectiles
             foreach (Projectile p in projectiles)
             {
                 p.draw(spriteBatch);
             }
 
+            score.draw(spriteBatch);
 
             foreach (Enemy e in enemies)
             {
                 e.draw(spriteBatch);
             }
 
-
             spriteBatch.End();
-
+            
             base.Draw(gameTime);
         }
     }
