@@ -172,7 +172,7 @@ namespace Galaga
                     stateZeroes.Add(e);
             }
 
-            if (gameTimer % nextDiveTime == 0 && gameStarted)
+            if (gameTimer % nextDiveTime == 0 && gameStarted && stateZeroes.Count > 0)
             {
                 stateZeroes[r.Next(0, stateZeroes.Count - 1)].dive();
                 nextDiveTime = r.Next(MIN_DIVE_TIME, MAX_DIVE_TIME);
