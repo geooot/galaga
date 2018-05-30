@@ -5,6 +5,10 @@ Another galaga clone made for my video game design class. Except it's America vs
 
 <p align="center"><img src="screenshot.png" width="400"/></p>
 
+## Technologies
+- C# 
+- XNA Game Engine
+
 ## Devs
 - Emily https://github.com/ultimatecodemasterofhacking
 - Nick https://github.com/HavikReaper
